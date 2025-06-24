@@ -9,12 +9,17 @@ public class Shop {
 
     public Future<Double> getPriceAsync(String product) {
 
-        CompletableFuture<Double> futurePrice = new CompletableFuture<>();
-        new Thread( () -> {
-            double price = calculatePrice(product);
-            futurePrice.complete(price);
-        }).start();
-        return futurePrice;
+        return CompletableFuture.supplyAsync(() -> calculatePrice(product));
+//        CompletableFuture<Double> futurePrice = new CompletableFuture<>();
+//        new Thread( () -> {
+//            try {
+//                double price = calculatePrice(product);
+//                futurePrice.complete(price);
+//            } catch (Exception e) {
+//                futurePrice.completeExceptionally(e);
+//            }
+//        }).start();
+//        return futurePrice;
     }
 
     public static void delay() {

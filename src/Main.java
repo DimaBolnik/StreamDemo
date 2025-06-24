@@ -1,19 +1,54 @@
-import java.util.*;
-import java.util.stream.Collectors;
+import UnSynchronApi.Shop;
+
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.OptionalLong;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.LongStream;
-import java.util.stream.Stream;
 
 public class Main {
-    public static void main(String[] args) {
-        long before = System.currentTimeMillis();
+    public static void main(String[] args) throws InterruptedException {
 
-        OptionalLong reduce = LongStream.iterate(1l, i -> i + 1l)
-                .limit(100000000)
-                .parallel()
-                .reduce(Long::sum);
-        long after = System.currentTimeMillis();
-        System.out.println(after - before);
-        System.out.println(reduce.getAsLong());
+//        Использование асинхронного API
+        Shop shop = new Shop();
+        long startTime = System.nanoTime();
+        Future<Double> futurePrice = shop.getPriceAsync("my best product");
+        long invocationTime = (System.nanoTime() - startTime) / 1000000;
+        System.out.println("invocation time: " + invocationTime);
+
+        doSimethingElse();
+
+        try {
+            Double price = futurePrice.get();
+            System.out.println(price);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+
+
+//        long before = System.currentTimeMillis();
+//
+//        OptionalLong reduce = LongStream.iterate(1l, i -> i + 1l)
+//                .limit(1000000000)
+////                .parallel()
+//                .reduce(Long::sum);
+//        long after = System.currentTimeMillis();
+//        System.out.println(after - before);
+//        System.out.println(reduce.getAsLong());
+//
+//
+//        long before2 = System.currentTimeMillis();
+//        OptionalLong reduce1 = LongStream.rangeClosed(1, 1000000000)
+//                .parallel()
+//                .reduce( Long::sum);
+//        long after2 = System.currentTimeMillis();
+//        System.out.println(after2 - before2);
+//        System.out.println(reduce1.getAsLong());
+//
+//        int[] i = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+//        System.out.println(i.length);
+//        Character.isDigit()
 //
 //        Trader raoul = new Trader("Raoul", "Cambridge");
 //        Trader mario = new Trader("Mario", "Milan");
@@ -85,5 +120,9 @@ public class Main {
 //                .map(t -> t.getValue())
 //                .reduce(Integer::min)
 //                .ifPresent(System.out::println);
+    }
+
+    private static void doSimethingElse() throws InterruptedException {
+        Thread.sleep(2000);
     }
 }
